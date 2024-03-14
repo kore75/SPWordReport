@@ -1,0 +1,21 @@
+{
+  "@microsoft/generator-sharepoint": {
+    "plusBeta": false,
+    "isCreatingSolution": true,
+    "nodeVersion": "18.19.0",
+    "sdksVersions": {
+      "@microsoft/microsoft-graph-client": "3.0.2",
+      "@microsoft/teams-js": "2.12.0"
+    },
+    "version": "1.18.2",
+    "libraryName": "word-report-w-part",
+    "libraryId": "ec5477ad-06d2-449d-bfbd-9d4887f5af5a",
+    "environment": "spo",
+    "packageManager": "npm",
+    "solutionName": "word-report-w-part",
+    "solutionShortDescription": "word-report-w-part description",
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "componentType": "webpart"
+  }
+}

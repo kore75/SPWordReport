@@ -1,0 +1,40 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
+  "solution": {
+    "name": "word-report-w-part-client-side-solution",
+    "id": "ec5477ad-06d2-449d-bfbd-9d4887f5af5a",
+    "version": "1.0.0.0",
+    "includeClientSideAssets": true,
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "developer": {
+      "name": "",
+      "websiteUrl": "",
+      "privacyUrl": "",
+      "termsOfUseUrl": "",
+      "mpnId": "Undefined-1.18.2"
+    },
+    "metadata": {
+      "shortDescription": {
+        "default": "word-report-w-part description"
+      },
+      "longDescription": {
+        "default": "word-report-w-part description"
+      },
+      "screenshotPaths": [],
+      "videoUrl": "",
+      "categories": []
+    },
+    "features": [
+      {
+        "title": "word-report-w-part Feature",
+        "description": "The feature that activates elements of the word-report-w-part solution.",
+        "id": "d8bfd041-a0cb-4af3-ae56-cda8b17429b4",
+        "version": "1.0.0.0"
+      }
+    ]
+  },
+  "paths": {
+    "zippedPackage": "solution/word-report-w-part.sppkg"
+  }
+}

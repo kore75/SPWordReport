@@ -1,0 +1,18 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/config.2.0.schema.json",
+  "version": "2.0",
+  "bundles": {
+    "word-report-generator-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/wordReportGenerator/WordReportGeneratorWebPart.js",
+          "manifest": "./src/webparts/wordReportGenerator/WordReportGeneratorWebPart.manifest.json"
+        }
+      ]
+    }
+  },
+  "externals": {},
+  "localizedResources": {
+    "WordReportGeneratorWebPartStrings": "lib/webparts/wordReportGenerator/loc/{locale}.js"
+  }
+}
