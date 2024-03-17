@@ -22,7 +22,8 @@
     "description": { "default": "WordReportGenerator description" },
     "officeFabricIconFontName": "Page",
     "properties": {
-      "description": "WordReportGenerator"
+      "description": "WordReportGenerator",
+      "listName": ""
     }
   }]
 }

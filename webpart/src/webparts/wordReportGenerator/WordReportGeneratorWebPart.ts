@@ -12,8 +12,13 @@ import * as strings from 'WordReportGeneratorWebPartStrings';
 import WordReportGenerator from './components/WordReportGenerator';
 import { IWordReportGeneratorProps } from './components/IWordReportGeneratorProps';
 
+import { PropertyPaneAsyncDropdown } from '../../controls/PropertyPaneAsyncDropdown/PropertyPaneAsyncDropdown';
+import { IDropdownOption } from 'office-ui-fabric-react/lib/components/Dropdown';
+import { update, get } from '@microsoft/sp-lodash-subset';
+
 export interface IWordReportGeneratorWebPartProps {
   description: string;
+  listName: string;
 }
 
 export default class WordReportGeneratorWebPart extends BaseClientSideWebPart<IWordReportGeneratorWebPartProps> {
@@ -26,6 +31,7 @@ export default class WordReportGeneratorWebPart extends BaseClientSideWebPart<IW
       WordReportGenerator,
       {
         description: this.properties.description,
+        listName: this.properties.listName,
         isDarkTheme: this._isDarkTheme,
         environmentMessage: this._environmentMessage,
         hasTeamsContext: !!this.context.sdks.microsoftTeams,
@@ -89,6 +95,29 @@ export default class WordReportGeneratorWebPart extends BaseClientSideWebPart<IW
 
   }
 
+  private onListChange(propertyPath: string, newValue: any): void {
+    const oldValue: any = get(this.properties, propertyPath);
+    // store new value in web part properties
+    update(this.properties, propertyPath, (): any => { return newValue; });
+    // refresh web part
+    this.render();
+  }
+
+  private loadLists(): Promise<IDropdownOption[]> {
+    return new Promise<IDropdownOption[]>((resolve: (options: IDropdownOption[]) => void, reject: (error: any) => void) => {
+      setTimeout(() => {
+        resolve([{
+          key: 'sharedDocuments',
+          text: 'Shared Documents'
+        },
+          {
+            key: 'myDocuments',
+            text: 'My Documents'
+          }]);
+      }, 2000);
+    });
+  }
+
   protected onDispose(): void {
     ReactDom.unmountComponentAtNode(this.domElement);
   }
@@ -110,7 +139,14 @@ export default class WordReportGeneratorWebPart extends BaseClientSideWebPart<IW
               groupFields: [
                 PropertyPaneTextField('description', {
                   label: strings.DescriptionFieldLabel
+                }),
+                new PropertyPaneAsyncDropdown('listName', {
+                  label: strings.ListFieldLabel,
+                  loadOptions: this.loadLists.bind(this),
+                  onPropertyChange: this.onListChange.bind(this),
+                  selectedKey: this.properties.listName
                 })
+                
               ]
             }
           ]

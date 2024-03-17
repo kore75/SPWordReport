@@ -10,7 +10,8 @@ export default class WordReportGenerator extends React.Component<IWordReportGene
       isDarkTheme,
       environmentMessage,
       hasTeamsContext,
-      userDisplayName
+      userDisplayName,
+      listName
     } = this.props;
 
     return (
@@ -20,6 +21,7 @@ export default class WordReportGenerator extends React.Component<IWordReportGene
           <h2>Well done, {escape(userDisplayName)}!</h2>
           <div>{environmentMessage}</div>
           <div>Web part property value: <strong>{escape(description)}</strong></div>
+          <div>List name: <strong>{escape(listName)}</strong></div>
         </div>
         <div>
           <h3>Welcome to SharePoint Framework!</h3>
