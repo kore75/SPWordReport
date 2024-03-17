@@ -107,8 +107,8 @@ export default class WordReportGeneratorWebPart extends BaseClientSideWebPart<IW
     return new Promise<IDropdownOption[]>((resolve: (options: IDropdownOption[]) => void, reject: (error: any) => void) => {
       setTimeout(() => {
         resolve([{
-          key: 'sharedDocuments',
-          text: 'Shared Documents'
+          key: 'Dokumente',
+          text: 'Dokumente'
         },
           {
             key: 'myDocuments',

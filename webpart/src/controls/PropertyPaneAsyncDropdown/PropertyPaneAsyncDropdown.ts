@@ -52,7 +52,7 @@ export class PropertyPaneAsyncDropdown implements IPropertyPaneField<IPropertyPa
       loadOptions: this.properties.loadOptions,
       onChanged: this.onChanged.bind(this),
       selectedKey: this.properties.selectedKey,
-      disabled: this.properties.disabled,
+      disabled: this.properties.disabled ?? false,
       // required to allow the component to be re-rendered by calling this.render() externally
       stateKey: new Date().toString()
     });

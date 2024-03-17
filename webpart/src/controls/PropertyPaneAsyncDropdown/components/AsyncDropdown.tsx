@@ -32,7 +32,7 @@ export default class AsyncDropdown extends React.Component<IAsyncDropdownProps, 
   private loadOptions(): void {
     this.setState({
       loading: true,
-      error: "",
+      error: undefined,
       options: []
     });
 
@@ -40,7 +40,7 @@ export default class AsyncDropdown extends React.Component<IAsyncDropdownProps, 
       .then((options: IDropdownOption[]): void => {
         this.setState({
           loading: false,
-          error: "",
+          error: undefined,
           options: options
         });
       }, (error: any): void => {
