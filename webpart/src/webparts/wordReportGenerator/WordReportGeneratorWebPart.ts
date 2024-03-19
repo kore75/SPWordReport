@@ -19,12 +19,14 @@ import { update, get } from '@microsoft/sp-lodash-subset';
 export interface IWordReportGeneratorWebPartProps {
   description: string;
   listName: string;
+  item?: string;
 }
 
 export default class WordReportGeneratorWebPart extends BaseClientSideWebPart<IWordReportGeneratorWebPartProps> {
 
   private _isDarkTheme: boolean = false;
   private _environmentMessage: string = '';
+  private _itemsDropDown: PropertyPaneAsyncDropdown;
 
   public render(): void {
     const element: React.ReactElement<IWordReportGeneratorProps> = React.createElement(
@@ -32,6 +34,7 @@ export default class WordReportGeneratorWebPart extends BaseClientSideWebPart<IW
       {
         description: this.properties.description,
         listName: this.properties.listName,
+        itemName:this.properties.item,
         isDarkTheme: this._isDarkTheme,
         environmentMessage: this._environmentMessage,
         hasTeamsContext: !!this.context.sdks.microsoftTeams,
@@ -99,8 +102,22 @@ export default class WordReportGeneratorWebPart extends BaseClientSideWebPart<IW
     const oldValue: any = get(this.properties, propertyPath);
     // store new value in web part properties
     update(this.properties, propertyPath, (): any => { return newValue; });
+    // reset selected item
+    this.properties.item = undefined;
+    // store new value in web part properties
+    update(this.properties, 'item', (): any => { return this.properties.item; });
     // refresh web part
     this.render();
+    
+      // reset selected values in item dropdown
+    this._itemsDropDown.properties.selectedKey = this.properties.item ?? "";
+      // allow to load items         
+    
+    this._itemsDropDown.properties.disabled = false;
+    this._itemsDropDown.render(); 
+      
+    // load items and re-render items dropdown
+    
   }
 
   private loadLists(): Promise<IDropdownOption[]> {
@@ -118,6 +135,51 @@ export default class WordReportGeneratorWebPart extends BaseClientSideWebPart<IW
     });
   }
 
+  private onListItemChange(propertyPath: string, newValue: any): void {
+    const oldValue: any = get(this.properties, propertyPath);
+    // store new value in web part properties
+    update(this.properties, propertyPath, (): any => { return newValue; });
+    // refresh web part
+    this.render();
+  }
+
+  private loadItems(): Promise<IDropdownOption[]> {
+    if (!this.properties.listName) {
+      // resolve to empty options since no list has been selected
+      return Promise.resolve([]);
+    }
+  
+    const wp: WordReportGeneratorWebPart = this;
+  
+    return new Promise<IDropdownOption[]>((resolve: (options: IDropdownOption[]) => void, reject: (error: any) => void) => {
+      setTimeout(() => {
+        const items :{[key:string]: IDropdownOption[]} ={
+          "Dokumente": [
+            {
+              key: 'spfx_presentation.pptx',
+              text: 'SPFx for the masses'
+            },
+            {
+              key: 'hello-world.spapp',
+              text: 'hello-world.spapp'
+            }
+          ],
+          "myDocuments": [
+            {
+              key: 'isaiah_cv.docx',
+              text: 'Isaiah CV'
+            },
+            {
+              key: 'isaiah_expenses.xlsx',
+              text: 'Isaiah Expenses'
+            }
+          ]
+        };
+        resolve(items[wp.properties.listName]);
+      }, 2000);
+    });
+  }
+
   protected onDispose(): void {
     ReactDom.unmountComponentAtNode(this.domElement);
   }
@@ -127,6 +189,15 @@ export default class WordReportGeneratorWebPart extends BaseClientSideWebPart<IW
   }
 
   protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
+     // reference to item dropdown needed later after selecting a list
+     this._itemsDropDown = new PropertyPaneAsyncDropdown('item', {
+      label: strings.ItemFieldLabel,
+      loadOptions: this.loadItems.bind(this),
+      onPropertyChange: this.onListItemChange.bind(this),
+      selectedKey: this.properties.item ?? "",
+      // should be disabled if no list has been selected
+      disabled: !this.properties.listName
+    });
     return {
       pages: [
         {
@@ -145,8 +216,8 @@ export default class WordReportGeneratorWebPart extends BaseClientSideWebPart<IW
                   loadOptions: this.loadLists.bind(this),
                   onPropertyChange: this.onListChange.bind(this),
                   selectedKey: this.properties.listName
-                })
-                
+                }),
+                this._itemsDropDown             
               ]
             }
           ]

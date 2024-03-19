@@ -23,7 +23,8 @@
     "officeFabricIconFontName": "Page",
     "properties": {
       "description": "WordReportGenerator",
-      "listName": ""
+      "listName": "",
+      "item": ""
     }
   }]
 }

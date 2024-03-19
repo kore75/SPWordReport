@@ -3,6 +3,7 @@ declare interface IWordReportGeneratorWebPartStrings {
   BasicGroupName: string;
   DescriptionFieldLabel: string;
   ListFieldLabel: string;
+  ItemFieldLabel: string;
   AppLocalEnvironmentSharePoint: string;
   AppLocalEnvironmentTeams: string;
   AppLocalEnvironmentOffice: string;

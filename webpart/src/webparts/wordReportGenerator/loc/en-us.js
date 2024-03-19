@@ -12,6 +12,7 @@ define([], function() {
     "AppOfficeEnvironment": "The app is running in office.com",
     "AppOutlookEnvironment": "The app is running in Outlook",
     "UnknownEnvironment": "The app is running in an unknown environment",
-    "ListFieldLabel": "List"
+    "ListFieldLabel": "List",
+    "ItemFieldLabel": "Item"
   }
 });
