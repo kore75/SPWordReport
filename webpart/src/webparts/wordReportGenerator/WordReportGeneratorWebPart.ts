@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDom from 'react-dom';
-import { Version } from '@microsoft/sp-core-library';
+import { Log, Version } from '@microsoft/sp-core-library';
 import {
   type IPropertyPaneConfiguration,
   PropertyPaneTextField
@@ -15,6 +15,11 @@ import { IWordReportGeneratorProps } from './components/IWordReportGeneratorProp
 import { PropertyPaneAsyncDropdown } from '../../controls/PropertyPaneAsyncDropdown/PropertyPaneAsyncDropdown';
 import { IDropdownOption } from 'office-ui-fabric-react/lib/components/Dropdown';
 import { update, get } from '@microsoft/sp-lodash-subset';
+import { SPDataService } from '../../service/SPDataService';
+import { ISPDataService } from '../../service/ISPDataService';
+import { SPFx, spfi } from '@pnp/sp';
+import { IDocumentLibraryInformation } from '@pnp/sp/sites';
+import { MockSPDataService } from '../../service/MockSPDataService';
 
 export interface IWordReportGeneratorWebPartProps {
   description: string;
@@ -120,19 +125,13 @@ export default class WordReportGeneratorWebPart extends BaseClientSideWebPart<IW
     
   }
 
-  private loadLists(): Promise<IDropdownOption[]> {
-    return new Promise<IDropdownOption[]>((resolve: (options: IDropdownOption[]) => void, reject: (error: any) => void) => {
-      setTimeout(() => {
-        resolve([{
-          key: 'Dokumente',
-          text: 'Dokumente'
-        },
-          {
-            key: 'myDocuments',
-            text: 'My Documents'
-          }]);
-      }, 2000);
-    });
+  private async loadLists(): Promise<IDropdownOption[]> {
+      
+    const service_=new SPDataService(this.context);
+
+    var items=await service_.loadSiteCollectionDocLibs();
+    return items;
+
   }
 
   private onListItemChange(propertyPath: string, newValue: any): void {
@@ -143,41 +142,15 @@ export default class WordReportGeneratorWebPart extends BaseClientSideWebPart<IW
     this.render();
   }
 
-  private loadItems(): Promise<IDropdownOption[]> {
+  private async loadItems(): Promise<IDropdownOption[]> {
     if (!this.properties.listName) {
       // resolve to empty options since no list has been selected
-      return Promise.resolve([]);
+      return [];
     }
-  
     const wp: WordReportGeneratorWebPart = this;
-  
-    return new Promise<IDropdownOption[]>((resolve: (options: IDropdownOption[]) => void, reject: (error: any) => void) => {
-      setTimeout(() => {
-        const items :{[key:string]: IDropdownOption[]} ={
-          "Dokumente": [
-            {
-              key: 'spfx_presentation.pptx',
-              text: 'SPFx for the masses'
-            },
-            {
-              key: 'hello-world.spapp',
-              text: 'hello-world.spapp'
-            }
-          ],
-          "myDocuments": [
-            {
-              key: 'isaiah_cv.docx',
-              text: 'Isaiah CV'
-            },
-            {
-              key: 'isaiah_expenses.xlsx',
-              text: 'Isaiah Expenses'
-            }
-          ]
-        };
-        resolve(items[wp.properties.listName]);
-      }, 2000);
-    });
+    const service=new SPDataService(this.context);
+    return await service.loadItems(wp.properties.listName);
+   
   }
 
   protected onDispose(): void {
@@ -213,7 +186,7 @@ export default class WordReportGeneratorWebPart extends BaseClientSideWebPart<IW
                 }),
                 new PropertyPaneAsyncDropdown('listName', {
                   label: strings.ListFieldLabel,
-                  loadOptions: this.loadLists.bind(this),
+                  loadOptions: this.loadLists.bind(this),                 
                   onPropertyChange: this.onListChange.bind(this),
                   selectedKey: this.properties.listName
                 }),
