@@ -1,4 +1,4 @@
-export interface IListInfo {
+export interface ISpListInfo {
     Id: string;
     Title: string;
   }

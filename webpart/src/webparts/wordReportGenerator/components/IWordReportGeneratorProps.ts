@@ -1,7 +1,9 @@
+
+import {ISpListInfo} from"../ISpListInfo"
 export interface IWordReportGeneratorProps {
   description: string;
-  listName: string;
-  itemName?: string;
+  reportDocLib?: ISpListInfo;
+  reportDocItem?: ISpListInfo;
   isDarkTheme: boolean;
   environmentMessage: string;
   hasTeamsContext: boolean;

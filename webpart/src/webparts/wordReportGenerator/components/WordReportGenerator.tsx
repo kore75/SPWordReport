@@ -2,6 +2,7 @@ import * as React from 'react';
 import styles from './WordReportGenerator.module.scss';
 import type { IWordReportGeneratorProps } from './IWordReportGeneratorProps';
 import { escape } from '@microsoft/sp-lodash-subset';
+import { ISpListInfo } from '../ISpListInfo';
 
 export default class WordReportGenerator extends React.Component<IWordReportGeneratorProps, {}> {
   public render(): React.ReactElement<IWordReportGeneratorProps> {
@@ -11,8 +12,8 @@ export default class WordReportGenerator extends React.Component<IWordReportGene
       environmentMessage,
       hasTeamsContext,
       userDisplayName,
-      listName,
-      itemName
+      reportDocLib,
+      reportDocItem
     } = this.props;
 
     return (
@@ -22,8 +23,8 @@ export default class WordReportGenerator extends React.Component<IWordReportGene
           <h2>Well done, {escape(userDisplayName)}!</h2>
           <div>{environmentMessage}</div>
           <div>Web part property value: <strong>{escape(description)}</strong></div>
-          <div>List name: <strong>{escape(listName)}</strong></div>
-          <div>Item name: <strong>{escape(itemName)}</strong></div>
+          <div>List name: <strong>{escape(reportDocLib?.Title ?? "")}</strong></div>
+          <div>Item name: <strong>{escape(reportDocItem?.Title?? "")}</strong></div>
         </div>
         <div>
           <h3>Welcome to SharePoint Framework!</h3>
