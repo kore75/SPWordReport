@@ -26,8 +26,15 @@ export class SPDataService implements ISPDataService
         return docLibs.map<IDropdownOption>((item)=>{return {key: item.Id, text: item.Title }});
                
     }
-    loadSiteCollectionLists(): Promise<IDropdownOption[]> {
-        throw new Error("Method not implemented.");
+    async loadSiteCollectionLists(): Promise<IDropdownOption[]> {
+         // within a webpart, application customizer, or adaptive card extension where the context object is available
+         const sp = getSP(this._context);
+         const lists=await sp.web.lists.select("BaseTemplate","Id","Title")();
+         const items=lists.filter((item)=>item.BaseTemplate==100).map<IDropdownOption>((item)=>{
+            {return {key: item.Id, text: item.Title }}
+         });
+         return items;
+
     }
     async loadItems(splist: string): Promise<IDropdownOption[]> {
          // within a webpart, application customizer, or adaptive card extension where the context object is available

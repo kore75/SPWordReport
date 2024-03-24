@@ -22,10 +22,12 @@ import { IDocumentLibraryInformation } from '@pnp/sp/sites';
 import { MockSPDataService } from '../../service/MockSPDataService';
 import { ISpListInfo } from './ISpListInfo';
 
+
 export interface IWordReportGeneratorWebPartProps {
   description: string;
   reportDocLib?: ISpListInfo;
   reportDocItem?: ISpListInfo;
+  reportDocList?: ISpListInfo;
 }
 
 export default class WordReportGeneratorWebPart extends BaseClientSideWebPart<IWordReportGeneratorWebPartProps> {
@@ -33,18 +35,22 @@ export default class WordReportGeneratorWebPart extends BaseClientSideWebPart<IW
   private _isDarkTheme: boolean = false;
   private _environmentMessage: string = '';
   private _itemsDropDown: PropertyPaneAsyncDropdown;
+  private _dataService: ISPDataService;
 
   public render(): void {
+   
     const element: React.ReactElement<IWordReportGeneratorProps> = React.createElement(
       WordReportGenerator,
       {
         description: this.properties.description,
         reportDocLib: this.properties.reportDocLib ,
         reportDocItem:this.properties.reportDocItem,
+        reportDocList : this.properties.reportDocList,
         isDarkTheme: this._isDarkTheme,
         environmentMessage: this._environmentMessage,
         hasTeamsContext: !!this.context.sdks.microsoftTeams,
-        userDisplayName: this.context.pageContext.user.displayName
+        userDisplayName: this.context.pageContext.user.displayName,
+        dataService:this._dataService
       }
     );
 
@@ -52,6 +58,8 @@ export default class WordReportGeneratorWebPart extends BaseClientSideWebPart<IW
   }
 
   protected onInit(): Promise<void> {
+    this._dataService=new SPDataService(this.context);
+
     return this._getEnvironmentMessage().then(message => {
       this._environmentMessage = message;
     });
@@ -104,7 +112,7 @@ export default class WordReportGeneratorWebPart extends BaseClientSideWebPart<IW
 
   }
 
-  private onListChange(propertyPath: string, newValue: any): void {
+  private onReportLibChange(propertyPath: string, newValue: any): void {
     const oldValue: any = get(this.properties, propertyPath);
     // store new value in web part properties
     update(this.properties, propertyPath, (): any => { return {Id:newValue.key,Title:newValue.text} as ISpListInfo; });
@@ -126,16 +134,35 @@ export default class WordReportGeneratorWebPart extends BaseClientSideWebPart<IW
     
   }
 
+  private onReportListChange(propertyPath: string, newValue: any): void {
+    const oldValue: any = get(this.properties, propertyPath);
+    // store new value in web part properties
+    update(this.properties, propertyPath, (): any => { return {Id:newValue.key,Title:newValue.text} as ISpListInfo; });
+    // reset selected item    
+    // store new value in web part properties
+   
+    this.render(); 
+    // load items and re-render items dropdown
+    
+  }
+
   private async loadDocLists(): Promise<IDropdownOption[]> {
       
-    const service_=new SPDataService(this.context);
+    
 
-    var items=await service_.loadSiteCollectionDocLibs();
+    var items=await this._dataService.loadSiteCollectionDocLibs();
     return items;
 
   }
 
-  private onListItemChange(propertyPath: string, newValue: any): void {
+  private async loadLists(): Promise<IDropdownOption[]> {
+      
+    var items=await  this._dataService.loadSiteCollectionLists();
+    return items;
+
+  }
+
+  private onReportListItemChange(propertyPath: string, newValue: any): void {
     const oldValue: any = get(this.properties, propertyPath);
     // store new value in web part properties
     update(this.properties, propertyPath, (): any => { return {Id:newValue.key,Title:newValue.text} as ISpListInfo; });
@@ -149,10 +176,10 @@ export default class WordReportGeneratorWebPart extends BaseClientSideWebPart<IW
       return [];
     }
     const wp: WordReportGeneratorWebPart = this;
-    const service=new SPDataService(this.context);
+   
     if(wp.properties.reportDocLib!=null)
     {
-      return await service.loadItems(wp.properties.reportDocLib.Id);
+      return await this._dataService.loadItems(wp.properties.reportDocLib.Id);
     }
     return [];
   }
@@ -170,7 +197,7 @@ export default class WordReportGeneratorWebPart extends BaseClientSideWebPart<IW
      this._itemsDropDown = new PropertyPaneAsyncDropdown('reportDocItem', {
       label: strings.ReportDocLabel,
       loadOptions: this.loadItems.bind(this),
-      onPropertyChange: this.onListItemChange.bind(this),
+      onPropertyChange: this.onReportListItemChange.bind(this),
       selectedKey: this.properties.reportDocItem?.Id ?? "",
       // should be disabled if no list has been selected
       disabled: !this.properties.reportDocLib
@@ -191,10 +218,21 @@ export default class WordReportGeneratorWebPart extends BaseClientSideWebPart<IW
                 new PropertyPaneAsyncDropdown('reportDocLib', {
                   label: strings.ReportDocLibLabel,
                   loadOptions: this.loadDocLists.bind(this),                 
-                  onPropertyChange: this.onListChange.bind(this),
+                  onPropertyChange: this.onReportLibChange.bind(this),
                   selectedKey: this.properties.reportDocLib?.Id ?? ""
                 }),
-                this._itemsDropDown             
+                this._itemsDropDown                         
+              ]
+            },
+            {
+              groupName: strings.ReportList,
+              groupFields: [                               
+                new PropertyPaneAsyncDropdown('reportDocList', {
+                  label: strings.ReportDocLibLabel,
+                  loadOptions: this.loadLists.bind(this),                 
+                  onPropertyChange: this.onReportListChange.bind(this),
+                  selectedKey: this.properties.reportDocList?.Id ?? ""
+                })                                  
               ]
             }
           ]

@@ -2,47 +2,90 @@ import * as React from 'react';
 import styles from './WordReportGenerator.module.scss';
 import type { IWordReportGeneratorProps } from './IWordReportGeneratorProps';
 import { escape } from '@microsoft/sp-lodash-subset';
+import { ListView, IViewField, SelectionMode, GroupOrder, IGrouping } from "@pnp/spfx-controls-react/lib/ListView";
+import { useBoolean } from '@uifabric/react-hooks';
 import { ISpListInfo } from '../ISpListInfo';
 
-export default class WordReportGenerator extends React.Component<IWordReportGeneratorProps, {}> {
-  public render(): React.ReactElement<IWordReportGeneratorProps> {
-    const {
-      description,
-      isDarkTheme,
-      environmentMessage,
-      hasTeamsContext,
-      userDisplayName,
-      reportDocLib,
-      reportDocItem
-    } = this.props;
-
-    return (
-      <section className={`${styles.wordReportGenerator} ${hasTeamsContext ? styles.teams : ''}`}>
-        <div className={styles.welcome}>
-          <img alt="" src={isDarkTheme ? require('../assets/welcome-dark.png') : require('../assets/welcome-light.png')} className={styles.welcomeImage} />
-          <h2>Well done, {escape(userDisplayName)}!</h2>
-          <div>{environmentMessage}</div>
-          <div>Web part property value: <strong>{escape(description)}</strong></div>
-          <div>List name: <strong>{escape(reportDocLib?.Title ?? "")}</strong></div>
-          <div>Item name: <strong>{escape(reportDocItem?.Title?? "")}</strong></div>
-        </div>
-        <div>
-          <h3>Welcome to SharePoint Framework!</h3>
-          <p>
-            The SharePoint Framework (SPFx) is a extensibility model for Microsoft Viva, Microsoft Teams and SharePoint. It&#39;s the easiest way to extend Microsoft 365 with automatic Single Sign On, automatic hosting and industry standard tooling.
-          </p>
-          <h4>Learn more about SPFx development:</h4>
-          <ul className={styles.links}>
-            <li><a href="https://aka.ms/spfx" target="_blank" rel="noreferrer">SharePoint Framework Overview</a></li>
-            <li><a href="https://aka.ms/spfx-yeoman-graph" target="_blank" rel="noreferrer">Use Microsoft Graph in your solution</a></li>
-            <li><a href="https://aka.ms/spfx-yeoman-teams" target="_blank" rel="noreferrer">Build for Microsoft Teams using SharePoint Framework</a></li>
-            <li><a href="https://aka.ms/spfx-yeoman-viva" target="_blank" rel="noreferrer">Build for Microsoft Viva Connections using SharePoint Framework</a></li>
-            <li><a href="https://aka.ms/spfx-yeoman-store" target="_blank" rel="noreferrer">Publish SharePoint Framework applications to the marketplace</a></li>
-            <li><a href="https://aka.ms/spfx-yeoman-api" target="_blank" rel="noreferrer">SharePoint Framework API reference</a></li>
-            <li><a href="https://aka.ms/m365pnp" target="_blank" rel="noreferrer">Microsoft 365 Developer Community</a></li>
-          </ul>
-        </div>
-      </section>
-    );
-  }
+interface reportListItem{
+  Id:string;
+  Title:string
 }
+
+const WordReportGenerator: React.FC<IWordReportGeneratorProps> = (props: IWordReportGeneratorProps)=>{
+  const {
+    description,
+    isDarkTheme,
+    environmentMessage,
+    hasTeamsContext,
+    userDisplayName,
+    reportDocLib,
+    reportDocItem,
+    reportDocList,
+    dataService
+  } = props;
+
+  const [loading, setLoading] = React.useState<Boolean>(true);
+
+  let listItems:reportListItem[]=[];
+
+  const viewFields: IViewField[] = [
+    {
+        name: 'Id',
+        displayName: 'Id',
+        minWidth: 100,
+        maxWidth: 150,
+        sorting: true
+    },
+    {
+        name: 'Title',
+        displayName: 'Title',
+        minWidth: 100,
+        maxWidth: 150
+    }    
+  ];
+
+  const loadItems=()=>{
+
+    if(reportDocList!=null){
+      dataService.loadItems(reportDocList.Id).then((items)=>{
+          listItems=items.map<reportListItem>((item:any)=>{return {Id:item.key,Title:item.text}});
+          setLoading(false);
+      }
+      );
+    }
+    else if(loading===false){
+      setLoading(true);
+    }
+
+  };
+
+  loadItems();
+  return (
+    <section className={`${styles.wordReportGenerator} ${hasTeamsContext ? styles.teams : ''}`}>
+      <div className={styles.welcome}>
+        <img alt="" src={isDarkTheme ? require('../assets/welcome-dark.png') : require('../assets/welcome-light.png')} className={styles.welcomeImage} />
+        <h2>Well done, {escape(userDisplayName)}!</h2>
+        <div>{environmentMessage}</div>
+        <div>Web part property value: <strong>{escape(description)}</strong></div>
+        <div>Report Vorlagenliste: <strong>{escape(reportDocLib?.Title ?? "")}</strong></div>
+        <div>Report Vorlagen: <strong>{escape(reportDocItem?.Title ?? "")}</strong></div>
+        <div>Report Liste: <strong>{escape(reportDocList?.Title ?? "")}</strong></div>
+      </div>
+      <div>
+        <h3>Welcome to SharePoint Framework!</h3>
+        { loading ? (<div>Loading, Please wait...</div>):
+        (
+        <ListView
+                        items={listItems}
+                        viewFields={viewFields}
+                        compact={true}
+                        selectionMode={SelectionMode.single}                                                                    
+                        stickyHeader={true}
+                        />
+         )}                        
+               
+      </div>
+    </section>
+  );
+}
+export default WordReportGenerator;

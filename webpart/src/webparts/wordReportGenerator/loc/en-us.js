@@ -13,6 +13,7 @@ define([], function() {
     "AppOutlookEnvironment": "The app is running in Outlook",
     "UnknownEnvironment": "The app is running in an unknown environment",
     "ReportDocLibLabel": "Report Dokument Lib",
-    "ReportDocLabel": "Reportfile"
+    "ReportDocLabel": "Reportfile",
+    "ReportList":"Liste für Reports"
   }
 });

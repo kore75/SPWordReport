@@ -1,6 +1,7 @@
 declare interface IWordReportGeneratorWebPartStrings {
   PropertyPaneDescription: string;
   BasicGroupName: string;
+  ReportList:string;
   DescriptionFieldLabel: string;
   ReportDocLibLabel: string;
   ReportDocLabel: string;
