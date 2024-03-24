@@ -2,7 +2,7 @@ declare interface IWordReportGeneratorWebPartStrings {
   PropertyPaneDescription: string;
   BasicGroupName: string;
   ReportList:string;
-  DescriptionFieldLabel: string;
+  ExternalApiUrl: string;
   ReportDocLibLabel: string;
   ReportDocLabel: string;
   AppLocalEnvironmentSharePoint: string;

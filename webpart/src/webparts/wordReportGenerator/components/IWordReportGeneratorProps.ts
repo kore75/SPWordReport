@@ -2,7 +2,7 @@
 import { ISPDataService } from "../../../service/ISPDataService";
 import {ISpListInfo} from"../ISpListInfo"
 export interface IWordReportGeneratorProps {
-  description: string;
+  externalApiUrl: string;
   reportDocLib?: ISpListInfo;
   reportDocItem?: ISpListInfo;
   reportDocList?: ISpListInfo;

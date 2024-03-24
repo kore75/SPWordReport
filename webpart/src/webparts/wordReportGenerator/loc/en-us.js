@@ -2,7 +2,7 @@ define([], function() {
   return {
     "PropertyPaneDescription": "Description",
     "BasicGroupName": "Report Template",
-    "DescriptionFieldLabel": "Description Field",
+    "ExternalApiUrl": "Extene Web API Adresse",
     "AppLocalEnvironmentSharePoint": "The app is running on your local environment as SharePoint web part",
     "AppLocalEnvironmentTeams": "The app is running on your local environment as Microsoft Teams app",
     "AppLocalEnvironmentOffice": "The app is running on your local environment in office.com",

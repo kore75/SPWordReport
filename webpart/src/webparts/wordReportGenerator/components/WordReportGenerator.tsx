@@ -13,7 +13,7 @@ interface reportListItem{
 
 const WordReportGenerator: React.FC<IWordReportGeneratorProps> = (props: IWordReportGeneratorProps)=>{
   const {
-    description,
+    externalApiUrl,
     isDarkTheme,
     environmentMessage,
     hasTeamsContext,
@@ -24,49 +24,42 @@ const WordReportGenerator: React.FC<IWordReportGeneratorProps> = (props: IWordRe
     dataService
   } = props;
 
-  const [loading, setLoading] = React.useState<Boolean>(true);
-
-  let listItems:reportListItem[]=[];
+  const [listetems, setListItems] = React.useState<reportListItem[]>([]);
+  const [loading, setloading] = React.useState<boolean>(true);
 
   const viewFields: IViewField[] = [
     {
         name: 'Id',
-        displayName: 'Id',
-        minWidth: 100,
-        maxWidth: 150,
-        sorting: true
+        minWidth: 50,
+        maxWidth: 100,
     },
     {
         name: 'Title',
-        displayName: 'Title',
         minWidth: 100,
-        maxWidth: 150
+        maxWidth: 150,             
     }    
   ];
 
-  const loadItems=()=>{
+  const loadItems=async ()=>{
 
     if(reportDocList!=null){
-      dataService.loadItems(reportDocList.Id).then((items)=>{
-          listItems=items.map<reportListItem>((item:any)=>{return {Id:item.key,Title:item.text}});
-          setLoading(false);
-      }
-      );
+      let allItems= await dataService.loadItems(reportDocList.Id);
+      let reportItems=allItems.map<reportListItem>((item:any)=>{return {Id:item.key,Title:item.text}});
+      setloading(false);
+      setListItems(reportItems);                  
     }
-    else if(loading===false){
-      setLoading(true);
-    }
+    else setloading(true);
+  }
 
-  };
+  React.useEffect(() => { loadItems() }, [props.reportDocList]);
 
-  loadItems();
   return (
     <section className={`${styles.wordReportGenerator} ${hasTeamsContext ? styles.teams : ''}`}>
       <div className={styles.welcome}>
         <img alt="" src={isDarkTheme ? require('../assets/welcome-dark.png') : require('../assets/welcome-light.png')} className={styles.welcomeImage} />
         <h2>Well done, {escape(userDisplayName)}!</h2>
         <div>{environmentMessage}</div>
-        <div>Web part property value: <strong>{escape(description)}</strong></div>
+        <div>Web API Url: <strong>{escape(externalApiUrl)}</strong></div>
         <div>Report Vorlagenliste: <strong>{escape(reportDocLib?.Title ?? "")}</strong></div>
         <div>Report Vorlagen: <strong>{escape(reportDocItem?.Title ?? "")}</strong></div>
         <div>Report Liste: <strong>{escape(reportDocList?.Title ?? "")}</strong></div>
@@ -76,7 +69,7 @@ const WordReportGenerator: React.FC<IWordReportGeneratorProps> = (props: IWordRe
         { loading ? (<div>Loading, Please wait...</div>):
         (
         <ListView
-                        items={listItems}
+                        items={listetems}
                         viewFields={viewFields}
                         compact={true}
                         selectionMode={SelectionMode.single}                                                                    

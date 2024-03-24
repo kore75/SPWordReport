@@ -24,7 +24,7 @@ import { ISpListInfo } from './ISpListInfo';
 
 
 export interface IWordReportGeneratorWebPartProps {
-  description: string;
+  externalApiUrl: string;
   reportDocLib?: ISpListInfo;
   reportDocItem?: ISpListInfo;
   reportDocList?: ISpListInfo;
@@ -42,7 +42,7 @@ export default class WordReportGeneratorWebPart extends BaseClientSideWebPart<IW
     const element: React.ReactElement<IWordReportGeneratorProps> = React.createElement(
       WordReportGenerator,
       {
-        description: this.properties.description,
+        externalApiUrl: this.properties.externalApiUrl,
         reportDocLib: this.properties.reportDocLib ,
         reportDocItem:this.properties.reportDocItem,
         reportDocList : this.properties.reportDocList,
@@ -212,8 +212,8 @@ export default class WordReportGeneratorWebPart extends BaseClientSideWebPart<IW
             {
               groupName: strings.BasicGroupName,
               groupFields: [
-                PropertyPaneTextField('description', {
-                  label: strings.DescriptionFieldLabel
+                PropertyPaneTextField('externalApiUrl', {
+                  label: strings.ExternalApiUrl
                 }),
                 new PropertyPaneAsyncDropdown('reportDocLib', {
                   label: strings.ReportDocLibLabel,
