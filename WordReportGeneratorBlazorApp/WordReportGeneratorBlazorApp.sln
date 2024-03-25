@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34701.34
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WordReportGeneratorBlazorApp.Server", "WordReportGeneratorBlazorApp\Server\WordReportGeneratorBlazorApp.Server.csproj", "{5123DEED-73BC-4D1F-8EAE-1AB432C86344}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WordReportGeneratorBlazorApp.Client", "WordReportGeneratorBlazorApp\Client\WordReportGeneratorBlazorApp.Client.csproj", "{1718ED0D-7ECF-4153-9D03-DD966E5CEF45}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WordReportGeneratorBlazorApp.Shared", "WordReportGeneratorBlazorApp\Shared\WordReportGeneratorBlazorApp.Shared.csproj", "{3F0E45B3-912A-4CC7-9DEC-2F3A9DE5185B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5123DEED-73BC-4D1F-8EAE-1AB432C86344}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5123DEED-73BC-4D1F-8EAE-1AB432C86344}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5123DEED-73BC-4D1F-8EAE-1AB432C86344}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5123DEED-73BC-4D1F-8EAE-1AB432C86344}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1718ED0D-7ECF-4153-9D03-DD966E5CEF45}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1718ED0D-7ECF-4153-9D03-DD966E5CEF45}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1718ED0D-7ECF-4153-9D03-DD966E5CEF45}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1718ED0D-7ECF-4153-9D03-DD966E5CEF45}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3F0E45B3-912A-4CC7-9DEC-2F3A9DE5185B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F0E45B3-912A-4CC7-9DEC-2F3A9DE5185B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F0E45B3-912A-4CC7-9DEC-2F3A9DE5185B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F0E45B3-912A-4CC7-9DEC-2F3A9DE5185B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {351D16A0-C5F9-4BAA-B36E-F3DDCB573F40}
+	EndGlobalSection
+EndGlobal

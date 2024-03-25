@@ -6,6 +6,12 @@
     "version": "1.0.0.0",
     "includeClientSideAssets": true,
     "skipFeatureDeployment": true,
+    "webApiPermissionRequests": [
+      {
+        "resource": "WordReportGenerator",
+        "scope": "access_as_user"
+      }
+    ],
     "isDomainIsolated": false,
     "developer": {
       "name": "",

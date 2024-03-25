@@ -1,5 +1,5 @@
 import { IDropdownOption } from "office-ui-fabric-react";
-import { ISPDataService } from "./ISPDataService";
+import { ISPDataService, IWeatherData } from "./ISPDataService";
 import "@pnp/sp/webs";
 import "@pnp/sp/lists";
 import "@pnp/sp/sites";
@@ -10,6 +10,9 @@ const awaitTimeout = (delay:number) =>
 
 export class MockSPDataService implements ISPDataService
 {
+    GetWheatherData(): Promise<IWeatherData[]> {
+      throw new Error("Method not implemented.");
+    }
     async loadSiteCollectionDocLibs(): Promise<IDropdownOption[]> {
 
         await awaitTimeout(2000);

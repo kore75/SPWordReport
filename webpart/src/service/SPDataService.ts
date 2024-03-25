@@ -1,5 +1,5 @@
 import { IDropdownOption } from "office-ui-fabric-react";
-import { ISPDataService } from "./ISPDataService";
+import { ISPDataService, IWeatherData } from "./ISPDataService";
 import "@pnp/sp/webs";
 import "@pnp/sp/lists";
 import "@pnp/sp/sites";
@@ -7,6 +7,10 @@ import "@pnp/sp/items/get-all";
 import { IDocumentLibraryInformation } from "@pnp/sp/sites";
 import { getSP } from './pnpjsConfig';
 import { WebPartContext } from "@microsoft/sp-webpart-base";
+import { AadHttpClient, HttpClientResponse } from '@microsoft/sp-http';
+
+
+ 
 
 export class SPDataService implements ISPDataService
 {
@@ -55,6 +59,13 @@ export class SPDataService implements ISPDataService
         
          
          return result;
+    }
+    async GetWheatherData(): Promise<IWeatherData[]>{
+        let client=await this._context.aadHttpClientFactory.getClient('api://13e67028-6a75-4c76-98cb-84118d194216');
+        let response= await client.get('https://localhost:7282/WeatherForecast',AadHttpClient.configurations.v1);
+        let data:IWeatherData[] = await response.json();
+        return data;
+        
     }
 
 }

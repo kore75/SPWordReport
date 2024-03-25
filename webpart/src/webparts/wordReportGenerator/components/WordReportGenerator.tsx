@@ -6,6 +6,7 @@ import { ListView, IViewField, SelectionMode, GroupOrder, IGrouping } from "@pnp
 import { useBoolean } from '@uifabric/react-hooks';
 import { ISpListInfo } from '../ISpListInfo';
 import ExternalLinkButton from './ExternalLinkButton';
+import { IWeatherData } from '../../../service/ISPDataService';
 
 interface reportListItem{
   Id:string;
@@ -26,7 +27,10 @@ const WordReportGenerator: React.FC<IWordReportGeneratorProps> = (props: IWordRe
   } = props;
 
   const [listetems, setListItems] = React.useState<reportListItem[]>([]);
+  const [wdata, setWData] = React.useState<IWeatherData[]>([]);
   const [loading, setloading] = React.useState<boolean>(true);
+
+ 
 
   const viewFields: IViewField[] = [
     {
@@ -50,12 +54,41 @@ const WordReportGenerator: React.FC<IWordReportGeneratorProps> = (props: IWordRe
         )
       }
   }
-
   ];
+  const viewFieldsWData: IViewField[] = [
+    {
+        name: 'date',
+        minWidth: 50,
+        maxWidth: 100,
+    },
+    {
+        name: 'temperatureC',      
+        minWidth: 100,
+        maxWidth: 150,             
+    },
+    {
+      name: 'summary',
+      minWidth: 100,
+      maxWidth: 150,             
+    },
+    {
+      name: 'temperatureF',
+      minWidth: 100,
+      maxWidth: 150,             
+    }   
+  ];
+
+  const showWeatherData:boolean=false;
 
   const loadItems=async ()=>{
 
+    if(showWeatherData){
+      let twdata=await dataService.GetWheatherData();   
+      setWData(twdata);    
+    }
+
     if(reportDocList!=null ){
+      
       let allItems= await dataService.loadItems(reportDocList.Id);
       let reportItems=allItems.map<reportListItem>((item:any)=>{return {Id:item.key,Title:item.text,CreateReport:externalApiUrl+item.key}});
       setloading(false);
@@ -78,6 +111,19 @@ const WordReportGenerator: React.FC<IWordReportGeneratorProps> = (props: IWordRe
         <div>Report Liste: <strong>{escape(reportDocList?.Title ?? "")}</strong></div>
       </div>
       <div>
+        
+        { showWeatherData ? (
+          <div>
+            <h3> Weather data from sample</h3>
+         <ListView
+                        items={wdata}
+                        viewFields={viewFieldsWData}
+                        compact={true}
+                        selectionMode={SelectionMode.single}                                                                    
+                        stickyHeader={true}
+         />
+         </div>
+        ):(<></> )}
         <h3>Welcome to SharePoint Framework!</h3>
         { loading ? (<div>Loading, Please wait...</div>):
         (
