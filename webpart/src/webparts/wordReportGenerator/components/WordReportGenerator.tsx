@@ -5,6 +5,7 @@ import { escape } from '@microsoft/sp-lodash-subset';
 import { ListView, IViewField, SelectionMode, GroupOrder, IGrouping } from "@pnp/spfx-controls-react/lib/ListView";
 import { useBoolean } from '@uifabric/react-hooks';
 import { ISpListInfo } from '../ISpListInfo';
+import ExternalLinkButton from './ExternalLinkButton';
 
 interface reportListItem{
   Id:string;
@@ -37,21 +38,33 @@ const WordReportGenerator: React.FC<IWordReportGeneratorProps> = (props: IWordRe
         name: 'Title',
         minWidth: 100,
         maxWidth: 150,             
-    }    
+    },
+    {
+      name:'CreateReport',
+      displayName:'Create Report',      
+      minWidth: 100,
+      maxWidth: 150,             
+      render:(item)=>{
+        return(
+          <ExternalLinkButton Name='Create Report' Url={item.CreateReport} />          
+        )
+      }
+  }
+
   ];
 
   const loadItems=async ()=>{
 
-    if(reportDocList!=null){
+    if(reportDocList!=null ){
       let allItems= await dataService.loadItems(reportDocList.Id);
-      let reportItems=allItems.map<reportListItem>((item:any)=>{return {Id:item.key,Title:item.text}});
+      let reportItems=allItems.map<reportListItem>((item:any)=>{return {Id:item.key,Title:item.text,CreateReport:externalApiUrl+item.key}});
       setloading(false);
       setListItems(reportItems);                  
     }
     else setloading(true);
   }
 
-  React.useEffect(() => { loadItems() }, [props.reportDocList]);
+  React.useEffect(() => { loadItems() }, [props.reportDocList,props.externalApiUrl]);
 
   return (
     <section className={`${styles.wordReportGenerator} ${hasTeamsContext ? styles.teams : ''}`}>
