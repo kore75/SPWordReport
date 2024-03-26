@@ -11,9 +11,9 @@
 
 <p>This component demonstrates fetching data from the server.</p>
 
-@if (forecasts == null)
+@if (forecasts == null )
 {
-    <p><em>Loading...</em></p>
+    <p><em>Loading Forecast...</em></p>
 }
 else
 {
@@ -40,14 +40,42 @@ else
     </table>
 }
 
+@if (listeItemData == null)
+{
+    <p><em>Loading List Items...</em></p>
+}
+else
+{
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Title</th>                
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var listItem in listeItemData)
+            {
+                <tr>
+                    <td>@listItem.Id</td>
+                    <td>@listItem.Title</td>                    
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
 @code {
     private WeatherForecast[]? forecasts;
+    private ListItemData[]? listeItemData;
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
             forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("WeatherForecast");
+            listeItemData = await Http.GetFromJsonAsync<ListItemData[]>("ReportGenerator?listName=ReportSource");                      
         }
         catch (AccessTokenNotAvailableException exception)
         {

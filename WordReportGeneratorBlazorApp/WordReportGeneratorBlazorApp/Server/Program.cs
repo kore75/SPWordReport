@@ -1,11 +1,12 @@
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Identity.Web;
+using PnP.Core.Auth.Services.Builder.Configuration;
+using PnP.Core.Services.Builder.Configuration;
 
 namespace WordReportGeneratorBlazorApp
 {
     //https://www.reddit.com/user/azzurrabrancati/comments/f1r3op/consume_azure_ad_secured_web_api_net_core_31_from/
+    //https://github.com/AzureAD/microsoft-identity-web/wiki/web-apis
 
     /// <summary>
     /// Consume Azure AD secured Web API .NET Core 3.1 from your SPFx code
@@ -18,7 +19,16 @@ namespace WordReportGeneratorBlazorApp
 
             // Add services to the container.
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
+                .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"))
+                .EnableTokenAcquisitionToCallDownstreamApi()
+                  .AddInMemoryTokenCaches();
+
+            // Add the PnP Core SDK library
+            builder.Services.AddPnPCore();
+            builder.Services.Configure<PnPCoreOptions>(builder.Configuration.GetSection("PnPCore"));
+            builder.Services.AddPnPCoreAuthentication();
+            builder.Services.Configure<PnPCoreAuthenticationOptions>(builder.Configuration.GetSection("PnPCore"));
+
 
             builder.Services.AddControllersWithViews();
             builder.Services.AddRazorPages();
