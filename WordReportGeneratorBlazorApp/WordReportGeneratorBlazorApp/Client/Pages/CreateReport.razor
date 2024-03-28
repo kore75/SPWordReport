@@ -1,0 +1,99 @@
+﻿@page "/createreport"
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using WordReportGeneratorBlazorApp.Shared
+@attribute [Authorize]
+@inject HttpClient Http
+@inject ILogger<CreateReport> Logger
+
+<h3>CreateReport</h3>
+
+<EditForm Model="ViewModel" OnSubmit="Submit" FormName="ReportFileRequest1">
+    <div class="mb-3">
+        <label for="ReportItemId" class="form-label">ReportItemId:</label>
+        <InputNumber class="form-control" @bind-Value="ViewModel!.ReportItemId" />        
+    </div>
+    <div class="mb-3">
+        <label for="DocumentLibGuid" class="form-label">DocumentLibGuid:</label>
+        <InputText class="form-control" @bind-Value="ViewModel!.DocumentLibGuid" />        
+    </div>
+    <div class="mb-3">
+        <label for="ItemId" class="form-label">ItemId:</label>
+        <InputNumber class="form-control" @bind-Value="ViewModel!.ItemId" />
+       
+    </div>
+    <div class="mb-3">
+        <label for="SpListGuid" class="form-label">SpListGuid:</label>
+        <InputText class="form-control" @bind-Value="ViewModel!.SpListGuid" />
+        
+    </div>
+    <div class="mb-3">
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+</EditForm> 
+
+@if (ReportFileResult!=null)
+{
+    <h3>@ReportFileResult.CreatedFileName @ReportFileResult.FilePath</h3>
+}
+@if(@Error!=null)
+{
+    <div class="text-danger">@Error</div>
+}
+
+@code {
+    protected override void OnInitialized() => ViewModel ??= new ReportFileRequestView { ReportItemId = 1, ItemId = 1, DocumentLibGuid = "6176fc55-78b7-4e29-b92c-44816540ac7e", SpListGuid = "a0e24368-43ee-434c-ae02-026a179d1abc" };
+
+    [SupplyParameterFromForm]
+    public ReportFileRequestView? ViewModel { get; set; }
+
+    public ReportFileResult? ReportFileResult { get; set; }
+
+    public string? Error { get; set; }
+
+    private async Task Submit()
+    {
+        try
+        {
+            Error = null;
+            if (ViewModel != null)
+            {
+                try
+                {
+                    var newDataModel = new ReportFileRequest();
+                    newDataModel.ItemId = ViewModel.ItemId;
+                    newDataModel.ReportItemId = ViewModel.ReportItemId;
+                    newDataModel.SpListGuid = Guid.Parse(ViewModel.SpListGuid);
+                    newDataModel.DocumentLibGuid = Guid.Parse(ViewModel.DocumentLibGuid);
+                    var result = await Http.PostAsJsonAsync<ReportFileRequest>("ReportGenerator", newDataModel);
+                    if (result.IsSuccessStatusCode)
+                    {
+                        ReportFileResult = await result.Content.ReadFromJsonAsync<ReportFileResult>();
+                    }
+                    else
+                    {
+                        Error = await result.Content.ReadAsStringAsync();
+                    }
+                }
+                catch (Exception exception)
+                {
+                    Error = exception.Message;
+                }               
+            }
+
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }       
+    }
+
+    public class ReportFileRequestView
+    {
+        public int ItemId { get; set; }
+        public string SpListGuid { get; set; } = "";
+        public int ReportItemId { get; set; }
+        public string DocumentLibGuid { get; set; } = "";
+    }
+
+}

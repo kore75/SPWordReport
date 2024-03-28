@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34701.34
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WordReportGeneratorBlazorApp.Server", "WordReportGeneratorBlazorApp\Server\WordReportGeneratorBlazorApp.Server.csproj", "{5123DEED-73BC-4D1F-8EAE-1AB432C86344}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WordReportGeneratorBlazorApp.Server", "WordReportGeneratorBlazorApp\Server\WordReportGeneratorBlazorApp.Server.csproj", "{5123DEED-73BC-4D1F-8EAE-1AB432C86344}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WordReportGeneratorBlazorApp.Client", "WordReportGeneratorBlazorApp\Client\WordReportGeneratorBlazorApp.Client.csproj", "{1718ED0D-7ECF-4153-9D03-DD966E5CEF45}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WordReportGeneratorBlazorApp.Client", "WordReportGeneratorBlazorApp\Client\WordReportGeneratorBlazorApp.Client.csproj", "{1718ED0D-7ECF-4153-9D03-DD966E5CEF45}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WordReportGeneratorBlazorApp.Shared", "WordReportGeneratorBlazorApp\Shared\WordReportGeneratorBlazorApp.Shared.csproj", "{3F0E45B3-912A-4CC7-9DEC-2F3A9DE5185B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WordReportGeneratorBlazorApp.Shared", "WordReportGeneratorBlazorApp\Shared\WordReportGeneratorBlazorApp.Shared.csproj", "{3F0E45B3-912A-4CC7-9DEC-2F3A9DE5185B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

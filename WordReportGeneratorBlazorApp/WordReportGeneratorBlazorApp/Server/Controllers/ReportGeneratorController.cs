@@ -7,7 +7,12 @@ using PnP.Core.Services;
 using WordReportGeneratorBlazorApp.Shared;
 using Microsoft.Extensions.Options;
 using PnP.Core.Auth;
+using Syncfusion.DocIO;
+using Syncfusion.DocIO.DLS;
 using System.Collections.Generic;
+using Syncfusion.Pdf;
+using System.Net.Mime;
+using AngleSharp.Common;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -98,9 +103,76 @@ namespace WordReportGeneratorBlazorApp.Server.Controllers
 
         // POST api/<ReportGeneratorController>
         [HttpPost]
-        public void Post([FromBody] ReportFile reportFile)
+        [Consumes(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<ReportFileResult>> Post([FromBody] ReportFileRequest reportFile)
         {
-
+            try
+            {
+                using (var context = await createSiteContextForUser())
+                {                  
+                    var spList = await context.Web.Lists.GetByIdAsync(reportFile.SpListGuid);
+                    if (spList == null)
+                    {
+                        return NotFound($"Source list with id:{reportFile.SpListGuid} not found");
+                    }
+                    var item = await spList.Items.GetByIdAsync(reportFile.ItemId);
+                    if (item == null)
+                    {
+                        return NotFound($"Source list item with id:{reportFile.ItemId} not found");
+                    }
+                    //var destDocLib = await context.Web.GetFolderByIdAsync(reportFile.DocumentLibGuid);
+                    var destDocLib = await context.Web.Lists.GetByIdAsync(reportFile.DocumentLibGuid);
+                    if (destDocLib == null)
+                    {
+                        return NotFound($"Template DocLib with id:{reportFile.DocumentLibGuid} not found");
+                    }
+                    var reportTemplate = await destDocLib.Items.GetByIdAsync(1, li => li.All, li => li.File);
+                    if (reportTemplate == null)
+                    {
+                        return NotFound($"Template File with id:{reportFile.ReportItemId} not found");
+                    }
+                    string templateFileExtennsion = Path.GetExtension(reportTemplate.File.Name);
+                    if (string.Compare(templateFileExtennsion, ".docx", true) != 0)
+                    {
+                        return BadRequest("Template in wrong format, has to be docx");
+                    }
+                    // Create a new document
+                    WordDocument document = new WordDocument(reportTemplate.File.GetContent(), FormatType.Docx);
+                    string[] fieldNames = new string[item.Values.Count];
+                    string[] fieldValues= new string[item.Values.Count];
+                    int idx = 0;
+                    foreach (var itemValue in item.Values)
+                    {
+                        fieldNames[idx] = itemValue.Key;
+                        fieldValues[idx] = Convert.ToString(itemValue.Value) ?? "";
+                        idx++;
+                    }                                   
+                    //Performs the mail merge
+                    document.MailMerge.Execute(fieldNames, fieldValues);
+                    //Saves the Word document to MemoryStream
+                    using (MemoryStream stream = new MemoryStream())
+                    {
+                        document.Save(stream, FormatType.Docx);
+                        //Closes the Word document
+                        document.Close();
+                        stream.Position = 0;
+                        var baseUri = context.Web.Url;
+                        string baseUrl = $"{baseUri.Scheme}://{baseUri.DnsSafeHost}";
+                       
+                        var newAttachment = await item.AttachmentFiles.AddAsync($"Report_{item.Id}_{DateTime.Now:yyyyMMddHHmmss}.docx", stream);
+                        string createdUri = $"{baseUrl}{newAttachment.ServerRelativeUrl}";
+                        ReportFileResult newReportFile = new ReportFileResult() { CreatedFileName = newAttachment.FileName, FilePath = createdUri };                                                              
+                        return Created(createdUri, newReportFile);
+                    }                    
+                }
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(exception.Message);
+            }            
         }
 
         //// PUT api/<ReportGeneratorController>/5

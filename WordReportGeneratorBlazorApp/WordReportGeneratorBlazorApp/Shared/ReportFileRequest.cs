@@ -6,13 +6,11 @@ using System.Threading.Tasks;
 
 namespace WordReportGeneratorBlazorApp.Shared
 {
-    public class ReportFile
-    {
-        public required string SiteCollectionUrl { get; set; }
+    public class ReportFileRequest
+    {        
         public int ItemId{ get; set; }
-        public Guid SpList { get; set; }        
+        public Guid SpListGuid { get; set; }        
         public int ReportItemId { get; set; }
-        public Guid DocumentLib { get; set; }
-        public ReportFileFormat FileFormat { get; set; }
+        public Guid DocumentLibGuid { get; set; }
     }
 }
