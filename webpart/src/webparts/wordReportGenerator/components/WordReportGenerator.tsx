@@ -10,7 +10,8 @@ import { IWeatherData } from '../../../service/ISPDataService';
 
 interface reportListItem{
   Id:string;
-  Title:string
+  Title:string;
+  CreateReport:string;
 }
 
 const WordReportGenerator: React.FC<IWordReportGeneratorProps> = (props: IWordReportGeneratorProps)=>{
@@ -50,7 +51,8 @@ const WordReportGenerator: React.FC<IWordReportGeneratorProps> = (props: IWordRe
       maxWidth: 150,             
       render:(item)=>{
         return(
-          <ExternalLinkButton Name='Create Report' Url={item.CreateReport} />          
+          <ExternalLinkButton Name='Create Report' Url={item.CreateReport} SPDataService={dataService} 
+          Request={{itemId:item.Id,spListGuid:reportDocList?.Id ?? "",reportItemId:+(reportDocItem?.Id ?? "0"),documentLibGuid:reportDocLib?.Id ?? "" }} />          
         )
       }
   }

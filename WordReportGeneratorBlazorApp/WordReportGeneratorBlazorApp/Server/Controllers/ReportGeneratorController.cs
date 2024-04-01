@@ -1,18 +1,19 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.Resource;
-using PnP.Core.Services.Builder.Configuration;
-using PnP.Core.Services;
-using WordReportGeneratorBlazorApp.Shared;
-using Microsoft.Extensions.Options;
 using PnP.Core.Auth;
+using PnP.Core.Model;
+using PnP.Core.QueryModel;
+using PnP.Core.Services;
+using PnP.Core.Services.Builder.Configuration;
 using Syncfusion.DocIO;
 using Syncfusion.DocIO.DLS;
-using System.Collections.Generic;
+using Syncfusion.DocIORenderer;
 using Syncfusion.Pdf;
 using System.Net.Mime;
-using AngleSharp.Common;
+using WordReportGeneratorBlazorApp.Shared;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -69,37 +70,35 @@ namespace WordReportGeneratorBlazorApp.Server.Controllers
         public async Task<IEnumerable<ListItemData>> Get([FromQuery]string listName)
         {
             List<ListItemData> itemDatas=new List<ListItemData>();
+            bool createSampleData = false;
             using (var context = await createSiteContextForUser())
             {
                 var list=await context.Web.Lists.GetByTitleAsync(listName);
                 foreach(var item in list.Items.ToList()) 
                 { 
                     itemDatas.Add(new ListItemData { Id=item.Id,Title=item.Title });
-                }                
-                //Dictionary<string, object> values = new Dictionary<string, object>
-                //{
-                //    { "Title", "PnP Rocks!" }
-                //};
+                }
+                if(createSampleData) 
+                {
+                    Dictionary<string, object> values = new Dictionary<string, object>
+                    {
+                        { "Title", "PnP Rocks!" }
+                    };
 
-                //await list.Items.AddBatchAsync(values);
-                //await list.Items.AddBatchAsync(values);
-                //await list.Items.AddBatchAsync(values);
+                    await list.Items.AddBatchAsync(values);
+                    await list.Items.AddBatchAsync(values);
+                    await list.Items.AddBatchAsync(values);
 
-                //// Send batch to the server
-                //await context.ExecuteAsync();
+                    // Send batch to the server
+                    await context.ExecuteAsync();
+                }
+
             }
 
             
 
             return itemDatas;
         }
-
-        //// GET api/<ReportGeneratorController>/5
-        //[HttpGet("{id}")]
-        //public string Get(int id)
-        //{
-        //    return "value";
-        //}
 
         // POST api/<ReportGeneratorController>
         [HttpPost]
@@ -118,7 +117,7 @@ namespace WordReportGeneratorBlazorApp.Server.Controllers
                     {
                         return NotFound($"Source list with id:{reportFile.SpListGuid} not found");
                     }
-                    var item = await spList.Items.GetByIdAsync(reportFile.ItemId);
+                    var item = await spList.Items.QueryProperties(x => x.Values["Author"]).FirstOrDefaultAsync(x => x.Id == reportFile.ItemId);
                     if (item == null)
                     {
                         return NotFound($"Source list item with id:{reportFile.ItemId} not found");
@@ -152,17 +151,23 @@ namespace WordReportGeneratorBlazorApp.Server.Controllers
                     }                                   
                     //Performs the mail merge
                     document.MailMerge.Execute(fieldNames, fieldValues);
+                    //
+                    DocIORenderer render = new DocIORenderer();
+                    //Sets Chart rendering Options.
+                    render.Settings.ChartRenderingOptions.ImageFormat = Syncfusion.OfficeChart.ExportImageFormat.Jpeg;
+                    //create Pdf
+                    PdfDocument pdfDocument = render.ConvertToPDF(document);
                     //Saves the Word document to MemoryStream
                     using (MemoryStream stream = new MemoryStream())
                     {
-                        document.Save(stream, FormatType.Docx);
+                        pdfDocument.Save(stream);
                         //Closes the Word document
                         document.Close();
                         stream.Position = 0;
                         var baseUri = context.Web.Url;
                         string baseUrl = $"{baseUri.Scheme}://{baseUri.DnsSafeHost}";
                        
-                        var newAttachment = await item.AttachmentFiles.AddAsync($"Report_{item.Id}_{DateTime.Now:yyyyMMddHHmmss}.docx", stream);
+                        var newAttachment = await item.AttachmentFiles.AddAsync($"Report_{item.Id}_{DateTime.Now:yyyyMMddHHmmss}.pdf", stream);
                         string createdUri = $"{baseUrl}{newAttachment.ServerRelativeUrl}";
                         ReportFileResult newReportFile = new ReportFileResult() { CreatedFileName = newAttachment.FileName, FilePath = createdUri };                                                              
                         return Created(createdUri, newReportFile);

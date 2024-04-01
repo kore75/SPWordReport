@@ -7,7 +7,9 @@ import "@pnp/sp/items/get-all";
 import { IDocumentLibraryInformation } from "@pnp/sp/sites";
 import { getSP } from './pnpjsConfig';
 import { WebPartContext } from "@microsoft/sp-webpart-base";
-import { AadHttpClient, HttpClientResponse } from '@microsoft/sp-http';
+import { AadHttpClient, HttpClientResponse,IHttpClientOptions } from '@microsoft/sp-http';
+import { IReportFileRequest } from "./IReportFileRequest";
+import { IReportFileResult } from "./IReportFileResult";
 
 
  
@@ -15,9 +17,22 @@ import { AadHttpClient, HttpClientResponse } from '@microsoft/sp-http';
 export class SPDataService implements ISPDataService
 {
     private _context : WebPartContext;
+    private readonly _apiId = 'api://13e67028-6a75-4c76-98cb-84118d194216';
+
     public constructor(context : WebPartContext) {
         this._context= context;
        
+    }
+    async CreateReport(request: IReportFileRequest): Promise<IReportFileResult> {
+        const bodyString:string=JSON.stringify(request);
+        const spOpts: IHttpClientOptions = { 
+            body: bodyString
+        };
+
+        const client=await this._context.aadHttpClientFactory.getClient(this._apiId);
+        const response= await client.post('https://localhost:7282/ReportGenerator',AadHttpClient.configurations.v1,spOpts);
+        let data:IReportFileResult = await response.json();
+        return data;        
     }
     async loadSiteCollectionDocLibs(): Promise<IDropdownOption[]> {
 
@@ -61,7 +76,7 @@ export class SPDataService implements ISPDataService
          return result;
     }
     async GetWheatherData(): Promise<IWeatherData[]>{
-        let client=await this._context.aadHttpClientFactory.getClient('api://13e67028-6a75-4c76-98cb-84118d194216');
+        let client=await this._context.aadHttpClientFactory.getClient(this._apiId);
         let response= await client.get('https://localhost:7282/WeatherForecast',AadHttpClient.configurations.v1);
         let data:IWeatherData[] = await response.json();
         return data;

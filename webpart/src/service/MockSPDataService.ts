@@ -3,6 +3,8 @@ import { ISPDataService, IWeatherData } from "./ISPDataService";
 import "@pnp/sp/webs";
 import "@pnp/sp/lists";
 import "@pnp/sp/sites";
+import { IReportFileRequest } from "./IReportFileRequest";
+import { IReportFileResult } from "./IReportFileResult";
 
 const awaitTimeout = (delay:number) =>
   new Promise(resolve => setTimeout(resolve, delay));
@@ -10,6 +12,9 @@ const awaitTimeout = (delay:number) =>
 
 export class MockSPDataService implements ISPDataService
 {
+    CreateReport(request: IReportFileRequest): Promise<IReportFileResult> {
+      throw new Error("Method not implemented.");
+    }
     GetWheatherData(): Promise<IWeatherData[]> {
       throw new Error("Method not implemented.");
     }
