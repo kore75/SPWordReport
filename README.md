@@ -1,21 +1,18 @@
-# SP React Webparts with .NET WebAPI To Create Pdf Report
+# SP React Webparts with .NET WebAPI To Create Pdf Reports
 
-Azure Ad make it possible to connecto to varios different Apis.
-The webpart created for SP Online uses Azure Ad to auhenticate.
+Azure Active Directory enables connectivity to various APIs. The SharePoint Online web part utilizes Azure AD for authentication.
 
-Msal within react can be used create access Json web tokens.
-This webToken is verified by the web API and used for an OBO flow to request other access tokens for SP. 
+MSAL within React can be employed to generate JSON Web Tokens, which are authenticated by the web API and utilized for an On-Behalf-Of (OBO) flow to request additional access tokens for SharePoint.
 
-The report template itself is word docx Field with mailmerge fields.
+The report template is a Word document with mail merge fields.
 
-The syncfusion library has advanced mail merge features, witch can fill those fields .
-This word feature is usualy used for serial letters, but comes quity handy is this specific scenario.
+The Syncfusion library offers advanced mail merge capabilities, which can populate these fields. Although this Word feature is typically utilized for serial letters, it proves quite useful in this specific scenario.
+
 
 ![Word Template](WordTemplate.png)
 
 
-
-The webpart can be configured to use a specific template and show a list of items for which the entry can be created.
+The web part can be configured to utilize a designated template and display a list of items for which entries can be created.
 
 ![Properties](WebPartProperties.png)
 
@@ -48,13 +45,13 @@ flowchart LR
   **This requires additional licencing depending on our scenario**
 
 ## Visual Studio Template
-The Template Used is a hosted Blazor WASM Application with Windows Integrated auth using MSAL.
+The template used is a hosted Blazor WebAssembly (WASM) application with Windows Integrated authentication using MSAL.
 
-The boilerplate code will create 2 web app registrations in Azure and provide most of the configuraration setting out of the box.
+The boilerplate code will establish two web app registrations in Azure and offer most of the configuration settings out of the box.
 
 ## The .NET WebAPI Modifications
 
-The authentification for OBO is configured by using EnableTokenAcquisitionToCallDownstreamApi.
+The authentication for On-Behalf-Of (OBO) is configured by utilizing the EnableTokenAcquisitionToCallDownstreamApi method.
 
 ```C#
 // Add services to the container.
