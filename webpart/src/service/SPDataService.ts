@@ -25,14 +25,22 @@ export class SPDataService implements ISPDataService
     }
     async CreateReport(request: IReportFileRequest): Promise<IReportFileResult> {
         const bodyString:string=JSON.stringify(request);
+
+        const requestHeaders: Headers = new Headers();
+        requestHeaders.append('Content-type', 'application/json');
+        
         const spOpts: IHttpClientOptions = { 
-            body: bodyString
+            body: bodyString,
+            headers:requestHeaders            
         };
 
         const client=await this._context.aadHttpClientFactory.getClient(this._apiId);
         const response= await client.post('https://localhost:7282/ReportGenerator',AadHttpClient.configurations.v1,spOpts);
+        if(!response.ok) throw(response.statusText)
+        
         let data:IReportFileResult = await response.json();
         return data;        
+        
     }
     async loadSiteCollectionDocLibs(): Promise<IDropdownOption[]> {
 

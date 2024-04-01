@@ -212,9 +212,9 @@ export default class WordReportGeneratorWebPart extends BaseClientSideWebPart<IW
             {
               groupName: strings.BasicGroupName,
               groupFields: [
-                PropertyPaneTextField('externalApiUrl', {
-                  label: strings.ExternalApiUrl                  
-                }),
+                // PropertyPaneTextField('externalApiUrl', {
+                //   label: strings.ExternalApiUrl                  
+                // }),
                 new PropertyPaneAsyncDropdown('reportDocLib', {
                   label: strings.ReportDocLibLabel,
                   loadOptions: this.loadDocLists.bind(this),                 

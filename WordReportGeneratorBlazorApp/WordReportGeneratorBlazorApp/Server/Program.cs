@@ -34,7 +34,7 @@ namespace WordReportGeneratorBlazorApp
             builder.Services.AddRazorPages();
             builder.Services.AddCors(options =>
             {
-                options.AddPolicy("CorsPolicy", builder => builder.WithOrigins("https://devkoeli.sharepoint.com")
+                options.AddPolicy("CorsPolicy", builder => builder.WithOrigins("https://devkoeli.sharepoint.com")                
                 .AllowAnyMethod()
                 .AllowAnyHeader());
             });

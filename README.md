@@ -2,12 +2,32 @@
 
 Azure Ad make it possible to connecto to varios different Apis.
 The webpart created for SP Online uses Azure Ad to auhenticate.
+
 Msal within react can be used create access Json web tokens.
 This webToken is verified by the web API and used for an OBO flow to request other access tokens for SP. 
 
 The report template itself is word docx Field with mailmerge fields.
+
 The syncfusion library has advanced mail merge features, witch can fill those fields .
-This word feature is usualy used for serial letters, but comes quity handy is this specific sceanrio.
+This word feature is usualy used for serial letters, but comes quity handy is this specific scenario.
+
+![Word Template](WordTemplate.png)
+
+
+
+The webpart can be configured to use a specific template and show a list of items for which the entry can be created.
+
+![Properties](WebPartProperties.png)
+
+**SpFx WebPart Used for List**
+
+![Properties](WebPartGeneration.png)
+
+The end result is an pdf File stored as attachment of then sp liste item entry.
+
+![Source](SPSource.png)
+
+![Properties](InvoicePdf.png)
 
 ```mermaid
 flowchart LR
@@ -16,6 +36,8 @@ flowchart LR
     B --> |2 Read Item List Data| D[SP Online]
     B --> |3 Store Report File as Attachment| E[SP Online]    
 ```
+
+
 
 ## Used Components
 * Spfx React Webpart

@@ -104,10 +104,7 @@ const WordReportGenerator: React.FC<IWordReportGeneratorProps> = (props: IWordRe
   return (
     <section className={`${styles.wordReportGenerator} ${hasTeamsContext ? styles.teams : ''}`}>
       <div className={styles.welcome}>
-        <img alt="" src={isDarkTheme ? require('../assets/welcome-dark.png') : require('../assets/welcome-light.png')} className={styles.welcomeImage} />
-        <h2>Well done, {escape(userDisplayName)}!</h2>
-        <div>{environmentMessage}</div>
-        <div>Web API Url: <strong>{escape(externalApiUrl)}</strong></div>
+        <img alt="" src={isDarkTheme ? require('../assets/welcome-dark.png') : require('../assets/welcome-light.png')} className={styles.welcomeImage} />      
         <div>Report Vorlagenliste: <strong>{escape(reportDocLib?.Title ?? "")}</strong></div>
         <div>Report Vorlagen: <strong>{escape(reportDocItem?.Title ?? "")}</strong></div>
         <div>Report Liste: <strong>{escape(reportDocList?.Title ?? "")}</strong></div>
